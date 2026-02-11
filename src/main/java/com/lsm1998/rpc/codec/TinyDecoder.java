@@ -1,13 +1,18 @@
-package org.lsm1998.rpc;
+package com.lsm1998.rpc.codec;
 
+import com.lsm1998.rpc.protocol.Message;
+import com.lsm1998.rpc.protocol.Request;
+import com.lsm1998.rpc.protocol.Response;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 public class TinyDecoder extends LengthFieldBasedFrameDecoder {
 
+    private static final int MAX_FRAME_LENGTH = 1024 * 1024 * 10; // 最大帧长度10MB
+
     public TinyDecoder() {
-        super(1024 * 1024, 0, 4, 0, 4);
+        super(MAX_FRAME_LENGTH, 0, 4, 0, 4);
     }
 
     @Override
@@ -17,6 +22,7 @@ public class TinyDecoder extends LengthFieldBasedFrameDecoder {
             return null;
         }
         Message message = new Message();
+        message.setLength(frame.readInt());
         byte[] logic = new byte[4];
         frame.readBytes(logic);
 
@@ -30,7 +36,7 @@ public class TinyDecoder extends LengthFieldBasedFrameDecoder {
         message.setLogic(logic);
         message.setVersion(frame.readByte());
         message.setMessageType(frame.readByte());
-        byte[] body = new byte[frame.readableBytes()];
+        byte[] body = new byte[message.getLength()];
         frame.readBytes(body);
         message.setBody(body);
 

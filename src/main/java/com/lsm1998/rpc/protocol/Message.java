@@ -1,6 +1,7 @@
-package org.lsm1998.rpc;
+package com.lsm1998.rpc.protocol;
 
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 public class Message {
@@ -12,8 +13,11 @@ public class Message {
 
     private byte messageType;
 
+    private int length;
+
     private byte[] body;
 
+    @Getter
     public enum MessageType {
         REQUEST((byte) 0x01),
         RESPONSE((byte) 0x02);
@@ -22,10 +26,6 @@ public class Message {
 
         MessageType(byte value) {
             this.value = value;
-        }
-
-        public byte getValue() {
-            return value;
         }
     }
 }
