@@ -1,6 +1,5 @@
 package com.lsm1998.rpc.provide;
 
-import com.lsm1998.rpc.Server;
 import com.lsm1998.rpc.codec.ResponseEncoder;
 import com.lsm1998.rpc.codec.TinyDecoder;
 import com.lsm1998.rpc.protocol.Request;
@@ -38,10 +37,14 @@ public class RpcServer implements Server {
                     ch.pipeline().addLast(new SimpleChannelInboundHandler<Request>() {
                         @Override
                         protected void channelRead0(ChannelHandlerContext channelHandlerContext, Request request) throws Exception {
-                            System.out.println(request);
-
                             Response response = new Response();
-                            response.setResult("hello client, your requestId is " + request.getRequestId());
+                            RpcService service = ProvideRegistry.getInstance().getService(request.getServiceName());
+                            if (service == null) {
+                                response.setErrCode(404);
+                                response.setResult("Service not found: " + request.getServiceName());
+                            } else {
+                                response.setResult(service.invoke(request.getMethodName(), request.getParams()));
+                            }
                             channelHandlerContext.writeAndFlush(response);
                         }
                     });
@@ -64,5 +67,10 @@ public class RpcServer implements Server {
         if (bossGroup != null) bossGroup.shutdownGracefully();
         if (workerGroup != null) workerGroup.shutdownGracefully();
         System.out.println("RPC Server 已关闭");
+    }
+
+    @Override
+    public void register(Object service) {
+        ProvideRegistry.getInstance().register(service.getClass(), service);
     }
 }

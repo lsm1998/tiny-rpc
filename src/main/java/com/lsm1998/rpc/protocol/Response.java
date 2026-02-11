@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 @Data
 public class Response {
+    private int errCode;
     private Object result;
 
     public byte[] encode() {
