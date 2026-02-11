@@ -1,5 +1,6 @@
 package com.lsm1998.rpc.codec;
 
+import com.alibaba.fastjson.JSONObject;
 import com.lsm1998.rpc.protocol.Message;
 import com.lsm1998.rpc.protocol.Request;
 import com.lsm1998.rpc.protocol.Response;
@@ -22,7 +23,7 @@ public class TinyDecoder extends LengthFieldBasedFrameDecoder {
             return null;
         }
         Message message = new Message();
-        message.setLength(frame.readInt());
+
         byte[] logic = new byte[4];
         frame.readBytes(logic);
 
@@ -36,8 +37,9 @@ public class TinyDecoder extends LengthFieldBasedFrameDecoder {
         message.setLogic(logic);
         message.setVersion(frame.readByte());
         message.setMessageType(frame.readByte());
-        byte[] body = new byte[message.getLength()];
+        byte[] body = new byte[frame.readableBytes()];
         frame.readBytes(body);
+        message.setLength(body.length);
         message.setBody(body);
 
         if (message.getMessageType() == Message.MessageType.REQUEST.getValue()) {
@@ -50,12 +52,10 @@ public class TinyDecoder extends LengthFieldBasedFrameDecoder {
     }
 
     private Request decodeRequest(Message message) {
-        // 这里可以根据实际需求进行反序列化
-        return new Request();
+        return JSONObject.parseObject(message.getBody(), Request.class);
     }
 
     private Response decodeResponse(Message message) {
-        // 这里可以根据实际需求进行反序列化
-        return new Response();
+        return JSONObject.parseObject(message.getBody(), Response.class);
     }
 }

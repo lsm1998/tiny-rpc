@@ -4,6 +4,7 @@ import com.lsm1998.rpc.Server;
 import com.lsm1998.rpc.codec.ResponseEncoder;
 import com.lsm1998.rpc.codec.TinyDecoder;
 import com.lsm1998.rpc.protocol.Request;
+import com.lsm1998.rpc.protocol.Response;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioIoHandler;
@@ -38,6 +39,10 @@ public class RpcServer implements Server {
                         @Override
                         protected void channelRead0(ChannelHandlerContext channelHandlerContext, Request request) throws Exception {
                             System.out.println(request);
+
+                            Response response = new Response();
+                            response.setResult("hello client, your requestId is " + request.getRequestId());
+                            channelHandlerContext.writeAndFlush(response);
                         }
                     });
                 }
