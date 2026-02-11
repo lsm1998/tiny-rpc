@@ -2,8 +2,6 @@ package com.lsm1998.rpc.provide;
 
 import com.lsm1998.rpc.codec.ResponseEncoder;
 import com.lsm1998.rpc.codec.TinyDecoder;
-import com.lsm1998.rpc.protocol.Request;
-import com.lsm1998.rpc.protocol.Response;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioIoHandler;
@@ -34,25 +32,11 @@ public class RpcServer implements Server {
                 protected void initChannel(SocketChannel ch) {
                     ch.pipeline().addLast(new TinyDecoder());
                     ch.pipeline().addLast(new ResponseEncoder());
-                    ch.pipeline().addLast(new SimpleChannelInboundHandler<Request>() {
-                        @Override
-                        protected void channelRead0(ChannelHandlerContext channelHandlerContext, Request request) throws Exception {
-                            Response response = new Response();
-                            RpcService service = ProvideRegistry.getInstance().getService(request.getServiceName());
-                            if (service == null) {
-                                response.setErrCode(404);
-                                response.setResult("Service not found: " + request.getServiceName());
-                            } else {
-                                response.setResult(service.invoke(request.getMethodName(), request.getParams()));
-                            }
-                            channelHandlerContext.writeAndFlush(response);
-                        }
-                    });
+                    ch.pipeline().addLast(new ProvideHandler());
                 }
             });
             ChannelFuture future = bootstrap.bind(host, port).sync();
             System.out.println("RPC Server 启动成功，监听端口: " + port);
-            // 等待服务器 socket 关闭
             future.channel().closeFuture().sync();
         } catch (Exception e) {
             Thread.currentThread().interrupt();

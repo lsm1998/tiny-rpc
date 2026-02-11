@@ -1,5 +1,8 @@
 package com.lsm1998.rpc.provide;
 
+import com.lsm1998.rpc.annotations.InternalMethod;
+import com.lsm1998.rpc.exceptions.MethodInternalException;
+
 import java.lang.reflect.Method;
 
 public class RpcService {
@@ -16,6 +19,10 @@ public class RpcService {
             argTypes[i] = args[i].getClass();
         }
         Method method = serviceClass.getMethod(methodName, argTypes);
+        InternalMethod internalMethodAnnotation = method.getAnnotation(InternalMethod.class);
+        if (internalMethodAnnotation != null) {
+            throw new MethodInternalException("Method is internal and cannot be invoked: " + methodName);
+        }
         return method.invoke(serviceImpl, args);
     }
 }

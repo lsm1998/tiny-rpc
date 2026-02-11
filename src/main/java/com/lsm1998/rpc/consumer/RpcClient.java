@@ -65,7 +65,7 @@ public class RpcClient implements AutoCloseable {
         channel.writeAndFlush(request);
         Response response = pendingResponse.get();
         if (response.getErrCode() != 0) {
-            throw new RuntimeException("RPC 调用失败: " + response.getErrCode());
+            throw new RuntimeException(String.format("RPC error,code:%d,desc:%s", response.getErrCode(), response.getErrDesc()));
         }
         return response.getResult();
     }

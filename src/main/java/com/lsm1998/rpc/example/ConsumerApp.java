@@ -2,7 +2,6 @@ package com.lsm1998.rpc.example;
 
 import com.lsm1998.rpc.consumer.RpcClient;
 import com.lsm1998.rpc.protocol.Request;
-import com.lsm1998.rpc.protocol.Response;
 
 public class ConsumerApp {
     public static void main(String[] args) throws Exception {
@@ -11,9 +10,9 @@ public class ConsumerApp {
             Request request = new Request();
             request.setRequestId("12345");
             request.setServiceName("com.lsm1998.rpc.example.MyService");
-            request.setMethodName("sayHello");
-            request.setParamTypes(new Class<?>[]{String.class});
-            request.setParams(new Object[]{"Hello RPC"});
+            request.setMethodName("add");
+            request.setParamTypes(new Class<?>[]{int.class, int.class});
+            request.setParams(new Object[]{100, 200});
             Object response = client.send(request);
             System.out.println("收到响应: " + response);
         }
