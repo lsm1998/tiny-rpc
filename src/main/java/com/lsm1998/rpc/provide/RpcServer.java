@@ -50,7 +50,6 @@ public class RpcServer implements Server {
     public void close() {
         if (bossGroup != null) bossGroup.shutdownGracefully();
         if (workerGroup != null) workerGroup.shutdownGracefully();
-        System.out.println("RPC Server 已关闭");
     }
 
     @Override

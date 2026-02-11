@@ -5,6 +5,9 @@ import com.lsm1998.rpc.consumer.RpcClient;
 public class ConsumerApp {
     public static void main(String[] args) throws Exception {
         try (RpcClient client = new RpcClient("127.0.0.1", 8080)) {
+            client.setConnectTimeoutMillis(3000);
+            client.setReadTimeoutMillis(3000);
+            client.setWriteTimeoutMillis(3000);
             client.connect();
 
             MyService service = client.createProxy(MyService.class);
