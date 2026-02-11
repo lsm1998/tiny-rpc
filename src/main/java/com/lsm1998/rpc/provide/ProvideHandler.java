@@ -17,7 +17,7 @@ public class ProvideHandler extends SimpleChannelInboundHandler<Request> {
             response.setErrDesc("Service not found: " + request.getServiceName());
         } else {
             try {
-                Object result = service.invoke(request.getMethodName(), request.getParams());
+                Object result = service.invoke(request.getMethodName(), request.getParamTypes(), request.getParams());
                 response.setResult(result);
             } catch (Exception e) {
                 if (e instanceof NoSuchMethodException) {
