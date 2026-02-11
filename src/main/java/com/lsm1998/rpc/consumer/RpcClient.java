@@ -70,6 +70,11 @@ public class RpcClient implements AutoCloseable {
         return response.getResult();
     }
 
+    public <T> T createProxy(Class<T> serviceClass) {
+        RpcProxy<T> proxy = new RpcProxy<>(this, serviceClass);
+        return proxy.getProxyInstance();
+    }
+
     @Override
     public void close() {
         if (channel != null) {
