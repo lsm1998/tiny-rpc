@@ -13,7 +13,10 @@ public class ProvideRegistry {
     }
 
     public void register(Class<?> serviceInterface, Object serviceImpl) {
-        this.serviceMap.put(serviceInterface.getName(), new RpcService(serviceImpl));
+        RpcService service = this.serviceMap.putIfAbsent(serviceInterface.getName(), new RpcService(serviceImpl));
+        if (service != null) {
+            throw new RuntimeException("Service already registered: " + serviceInterface.getName());
+        }
     }
 
     public RpcService getService(String serviceName) {

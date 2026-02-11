@@ -14,7 +14,7 @@ public class ConsumerApp {
             request.setMethodName("sayHello");
             request.setParamTypes(new Class<?>[]{String.class});
             request.setParams(new Object[]{"Hello RPC"});
-            Response response = client.send(request);
+            Object response = client.send(request);
             System.out.println("收到响应: " + response);
         }
     }

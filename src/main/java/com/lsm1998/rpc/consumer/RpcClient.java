@@ -57,13 +57,17 @@ public class RpcClient implements AutoCloseable {
         System.out.println("RPC Client 连接成功: " + host + ":" + port);
     }
 
-    public Response send(Request request) throws Exception {
+    public Object send(Request request) throws Exception {
         if (channel == null || !channel.isActive()) {
             throw new IllegalStateException("客户端未连接");
         }
         pendingResponse = new CompletableFuture<>();
         channel.writeAndFlush(request);
-        return pendingResponse.get();
+        Response response = pendingResponse.get();
+        if (response.getErrCode() != 0) {
+            throw new RuntimeException("RPC 调用失败: " + response.getErrCode());
+        }
+        return response.getResult();
     }
 
     @Override
