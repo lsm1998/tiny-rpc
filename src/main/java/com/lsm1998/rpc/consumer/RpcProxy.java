@@ -32,7 +32,7 @@ public class RpcProxy<T> {
         @Override
         public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
             Request request = new Request();
-            request.setRequestId(String.valueOf(System.currentTimeMillis()));
+            request.setRequestId();
             request.setServiceName(serviceClass.getName());
             request.setMethodName(method.getName());
             request.setParamTypes(method.getParameterTypes());
